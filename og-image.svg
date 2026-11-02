@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f3f5ef"/>
+  <rect x="48" y="48" width="1104" height="534" rx="16" fill="#e4ece7" stroke="#c5d1cb"/>
+  <circle cx="1000" cy="170" r="110" fill="#14756a" opacity="0.08"/>
+  <text x="112" y="214" fill="#14756a" font-family="Arial, sans-serif" font-size="26" font-weight="700">FULL STACK DEVELOPER</text>
+  <text x="112" y="330" fill="#1d2926" font-family="Arial, sans-serif" font-size="74" font-weight="800">Eswar Devisetty</text>
+  <text x="112" y="390" fill="#5d6965" font-family="Arial, sans-serif" font-size="28">React · Next.js · Node.js · Flutter · WebRTC</text>
+  <rect x="112" y="452" width="188" height="6" rx="3" fill="#14756a"/>
+  <rect x="312" y="452" width="62" height="6" rx="3" fill="#dc7d52"/>
+</svg>

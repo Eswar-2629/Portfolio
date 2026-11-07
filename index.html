@@ -118,15 +118,18 @@
       <section class="section page-width projects-section reveal" id="projects" aria-labelledby="projects-title">
         <div class="section-heading"><span class="section-number">04</span><h2 id="projects-title">GitHub projects</h2></div>
         <div class="section-content">
-          <div class="project-filters" role="group" aria-label="Filter repositories">
-            <button class="project-filter active" type="button" data-filter="all" aria-pressed="true">All <span>15</span></button>
-            <button class="project-filter" type="button" data-filter="web" aria-pressed="false">Web</button>
-            <button class="project-filter" type="button" data-filter="security" aria-pressed="false">Security</button>
-            <button class="project-filter" type="button" data-filter="data" aria-pressed="false">Data & AI</button>
-            <button class="project-filter" type="button" data-filter="mobile" aria-pressed="false">Mobile</button>
-            <button class="project-filter" type="button" data-filter="other" aria-pressed="false">Other</button>
+          <div class="repository-controls" aria-label="Repository controls">
+            <label class="repository-search"><span>Search repositories</span><input id="repository-search" type="search" placeholder="Search name, description, or technology"></label>
+            <label class="repository-select"><span>Language</span><select id="repository-language"><option value="all">All languages</option></select></label>
+            <label class="repository-select"><span>Topic</span><select id="repository-topic"><option value="all">All topics</option></select></label>
+            <label class="repository-select"><span>Sort</span><select id="repository-sort"><option value="updated">Recently updated</option><option value="name">Name A–Z</option><option value="stars">Stars</option></select></label>
+            <button class="repository-refresh project-filter" id="repository-refresh" type="button">Refresh</button>
           </div>
-          <div class="project-grid">
+          <p class="repository-status" id="repository-status" role="status" aria-live="polite"></p>
+          <div class="repository-state" id="repository-loading" hidden><span class="repository-spinner" aria-hidden="true"></span> Loading repositories…</div>
+          <div class="repository-state repository-error" id="repository-error" hidden><p>GitHub repositories could not be loaded.</p><button class="project-filter" id="repository-retry" type="button">Retry</button></div>
+          <div class="repository-state" id="repository-empty" hidden>No repositories match these controls.</div>
+          <div class="project-grid" id="repository-grid" aria-busy="true">
             <article class="project-card" data-category="web"><div class="project-top"><span class="project-type">Portfolio · Web</span><span class="project-id">Repository 01</span></div><h3>Portfolio</h3><p>This responsive static portfolio uses semantic HTML, CSS, and lightweight JavaScript for themes, navigation, and scroll-aware interactions.</p><div class="tag-list"><span>HTML</span><span>CSS</span><span>JavaScript</span></div><div class="project-actions"><a class="project-link live-link" href="https://portfolio-seven-gilt-zjk8yagogs.vercel.app" target="_blank" rel="noopener noreferrer"><span class="live-dot"></span> Live Demo</a><a class="project-link" href="https://github.com/Eswar-2629/Portfolio" target="_blank" rel="noopener noreferrer">GitHub</a></div></article>
             <article class="project-card" data-category="security"><div class="project-top"><span class="project-type">Security · Web</span><span class="project-id">Repository 02</span></div><h3>AI-Powered Phishing Email Detection</h3><p>A browser-based email-risk checker that reviews common phishing signals and presents explainable warnings.</p><div class="tag-list"><span>JavaScript</span><span>HTML</span><span>CSS</span></div><div class="project-actions"><a class="project-link live-link" href="https://ai-powered-phishing-email-detection.vercel.app" target="_blank" rel="noopener noreferrer"><span class="live-dot"></span> Live Demo</a><a class="project-link" href="https://github.com/Eswar-2629/AI-Powered-Phishing-Email-Detection" target="_blank" rel="noopener noreferrer">GitHub</a></div></article>
             <article class="project-card" data-category="data web"><div class="project-top"><span class="project-type">Education · Full stack</span><span class="project-id">Repository 03</span></div><div class="project-media"><img src="assets/aptitude-preview.svg" alt="Illustrative aptitude quiz interface preview" width="1200" height="675"></div><h3>Gamified Aptitude Test Platform</h3><p>A full-stack aptitude practice platform with a Spring Boot API, React web app, and a separate Python AI scoring service.</p><div class="tag-list"><span>Java</span><span>Spring Boot</span><span>React</span><span>Python</span><span>TypeScript</span></div><div class="project-actions"><a class="project-link" href="https://github.com/Eswar-2629/Gamified-Aptitude-Test-Platform" target="_blank" rel="noopener noreferrer">GitHub · Live demo not publicly verifiable</a></div></article>

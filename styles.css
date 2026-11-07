@@ -309,6 +309,22 @@ h1 { font-family: var(--font-display); letter-spacing: -.04em; }
 .tech-item:hover .tech-icon { transform: translateY(-3px); border-color: var(--accent); background: var(--surface); }
 
 .project-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.repository-controls { display: grid; grid-template-columns: minmax(220px, 1fr) repeat(3, minmax(130px, 170px)) auto; align-items: end; gap: 10px; margin-bottom: 12px; }
+.repository-search, .repository-select { min-width: 0; display: grid; gap: 5px; color: var(--muted); font-size: 10px; font-weight: 700; }
+.repository-search input, .repository-select select { width: 100%; min-height: 40px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--ink); font: 12px var(--font-body); outline: none; }
+.repository-search input { padding: 0 11px; }
+.repository-select select { padding: 0 8px; }
+.repository-search input:focus-visible, .repository-select select:focus-visible, .repository-refresh:focus-visible { outline: 3px solid var(--signal); outline-offset: 2px; }
+.repository-refresh { min-height: 40px; }
+.repository-status { min-height: 20px; margin-bottom: 10px; color: var(--muted); font-size: 11px; }
+.repository-state { min-height: 180px; display: grid; place-items: center; align-content: center; gap: 12px; border: 1px dashed var(--line); border-radius: var(--radius-md); color: var(--muted); text-align: center; }
+.repository-state[hidden] { display: none; }
+.repository-error p { margin-bottom: 0; }
+.repository-spinner { width: 22px; height: 22px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: repository-spin .8s linear infinite; }
+@keyframes repository-spin { to { transform: rotate(360deg); } }
+.repository-demo-label { align-self: center; color: var(--muted); font-size: 10px; }
+.repository-preview { width: 100%; margin-bottom: 16px; }
+.repository-preview img { filter: saturate(.92); }
 .project-filter { min-height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer; transition: background-color .2s, border-color .2s, color .2s, transform .2s; }
 .project-filter span { margin-left: 5px; color: var(--signal); }
 .project-filter:hover { transform: translateY(-2px); border-color: var(--accent); }
@@ -377,6 +393,9 @@ h1 { font-family: var(--font-display); letter-spacing: -.04em; }
   .hero-meta { grid-template-columns: 1fr; bottom: 16px; }
   .section { grid-template-columns: 1fr; gap: 24px; padding-block: 48px; }
   .profile-grid, .skills-grid { grid-template-columns: 1fr; }
+  .repository-controls { grid-template-columns: 1fr 1fr; }
+  .repository-search { grid-column: 1 / -1; }
+  .repository-refresh { width: 100%; }
   .tech-list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .project-grid { display: grid; grid-template-columns: 1fr; gap: 16px; overflow: visible; padding: 0; }
   .project-card, .project-featured, .project-link-only { width: 100%; grid-column: auto; min-height: 280px; scroll-snap-align: start; }
@@ -393,6 +412,7 @@ h1 { font-family: var(--font-display); letter-spacing: -.04em; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .reveal, .project-card, .skill-group { opacity: 1; transform: none; }
+  .repository-spinner { animation: none; }
   .skill-marquee-track { animation: none !important; }
   .tech-item:hover .tech-icon { transform: none; }
 }
@@ -411,7 +431,7 @@ body[data-theme="dark"] .project-card,
 body[data-theme="dark"] .skill-group,
 body[data-theme="dark"] .language-list p { box-shadow: 0 16px 40px rgba(0, 0, 0, .18); }
 body[data-theme="dark"] .hero::before { opacity: 1; }
-@media (max-width: 380px) { .tech-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 380px) { .tech-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } .repository-controls { grid-template-columns: 1fr; } .repository-search { grid-column: auto; } }
 
 @media (max-width: 640px) {
   .skill-marquee-track { animation-duration: 18s; }

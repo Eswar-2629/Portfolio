@@ -72,26 +72,216 @@ document.querySelectorAll(".reveal, .project-card, .skill-group").forEach((eleme
   revealObserver.observe(element);
 });
 
-const projectFilters = [...document.querySelectorAll(".project-filter")];
-const projectCards = [...document.querySelectorAll(".project-card[data-category]")];
-projectFilters.forEach((filter) => filter.addEventListener("click", () => {
-  const selected = filter.dataset.filter;
-  projectFilters.forEach((button) => {
-    const active = button === filter;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", String(active));
+const repositoryGrid = document.querySelector("#repository-grid");
+const repositorySearch = document.querySelector("#repository-search");
+const repositoryLanguage = document.querySelector("#repository-language");
+const repositoryTopic = document.querySelector("#repository-topic");
+const repositorySort = document.querySelector("#repository-sort");
+const repositoryStatus = document.querySelector("#repository-status");
+const repositoryLoading = document.querySelector("#repository-loading");
+const repositoryError = document.querySelector("#repository-error");
+const repositoryEmpty = document.querySelector("#repository-empty");
+const repositoryRefresh = document.querySelector("#repository-refresh");
+const repositoryRetry = document.querySelector("#repository-retry");
+const repositoryCacheKey = "portfolio-github-repositories-v1";
+const repositoryCacheMaxAge = 30 * 60 * 1000;
+let repositories = [];
+
+function setRepositoryState(state) {
+  repositoryLoading.hidden = state !== "loading";
+  repositoryError.hidden = state !== "error";
+  repositoryEmpty.hidden = state !== "empty";
+  repositoryGrid.hidden = state === "loading" || state === "error";
+  repositoryGrid.setAttribute("aria-busy", String(state === "loading"));
+}
+
+function readRepositoryCache() {
+  try {
+    const cached = JSON.parse(localStorage.getItem(repositoryCacheKey));
+    if (!cached?.repositories || !cached?.fetchedAt) return null;
+    if (Date.now() - new Date(cached.fetchedAt).getTime() > repositoryCacheMaxAge) return null;
+    return cached;
+  } catch {
+    return null;
+  }
+}
+
+function createRepositoryCard(repo, index) {
+  const card = document.createElement("article");
+  card.className = "project-card";
+  card.style.setProperty("--reveal-delay", reducedMotion.matches ? "0ms" : `${index % 4 * 70}ms`);
+
+  const top = document.createElement("div");
+  top.className = "project-top";
+  const type = document.createElement("span");
+  type.className = "project-type";
+  type.textContent = repo.language ? `Repository · ${repo.language}` : "Repository · Language not listed";
+  const id = document.createElement("span");
+  id.className = "project-id";
+  id.textContent = `Updated ${repo.updatedAt ? new Date(repo.updatedAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }) : "date unavailable"}`;
+  top.append(type, id);
+
+  if (repo.previewUrl) {
+    const media = document.createElement("div");
+    media.className = "project-media repository-preview";
+    const image = document.createElement("img");
+    image.src = repo.previewUrl;
+    image.alt = repo.previewAlt || `Live output preview for ${repo.name}`;
+    image.width = 1200;
+    image.height = 675;
+    image.loading = "lazy";
+    media.append(image);
+    card.append(media);
+  }
+
+  const title = document.createElement("h3");
+  title.textContent = repo.name || "Unnamed repository";
+  const description = document.createElement("p");
+  description.textContent = repo.description || "No description provided";
+
+  const tags = document.createElement("div");
+  tags.className = "tag-list";
+  if (repo.language) {
+    const languageTag = document.createElement("span");
+    languageTag.textContent = repo.language;
+    tags.append(languageTag);
+  }
+  repo.topics?.slice(0, 6).forEach((topic) => {
+    const topicTag = document.createElement("span");
+    topicTag.textContent = topic;
+    tags.append(topicTag);
   });
-  projectCards.forEach((card, index) => {
-    const categories = card.dataset.category.split(" ");
-    const visible = selected === "all" || categories.includes(selected);
-    card.hidden = !visible;
-    card.classList.remove("filter-enter");
-    if (visible) {
-      card.style.setProperty("--filter-delay", reducedMotion.matches ? "0ms" : `${index % 6 * 45}ms`);
-      requestAnimationFrame(() => card.classList.add("filter-enter"));
+  if (!repo.language && (!repo.topics || repo.topics.length === 0)) {
+    const pending = document.createElement("span");
+    pending.textContent = "No language or topics listed";
+    tags.append(pending);
+  }
+
+  const actions = document.createElement("div");
+  actions.className = "project-actions";
+  if (repo.demoUrl) {
+    const demo = document.createElement("a");
+    demo.className = "project-link live-link";
+    demo.href = repo.demoUrl;
+    demo.target = "_blank";
+    demo.rel = "noopener noreferrer";
+    const dot = document.createElement("span");
+    dot.className = "live-dot";
+    dot.setAttribute("aria-hidden", "true");
+    demo.append(dot, document.createTextNode(" Verified Live Demo"));
+    actions.append(demo);
+  }
+  const github = document.createElement("a");
+  github.className = "project-link";
+  github.href = repo.htmlUrl;
+  github.target = "_blank";
+  github.rel = "noopener noreferrer";
+  github.textContent = "GitHub";
+  actions.append(github);
+
+  if (!repo.demoUrl) {
+    const label = document.createElement("span");
+    label.className = "repository-demo-label";
+    label.textContent = "No verified live demo";
+    actions.append(label);
+  }
+
+  card.append(top, title, description, tags, actions);
+  return card;
+}
+
+function populateRepositoryFilters() {
+  const languages = [...new Set(repositories.map((repo) => repo.language).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  const topics = [...new Set(repositories.flatMap((repo) => repo.topics || []))].sort((a, b) => a.localeCompare(b));
+  repositoryLanguage.replaceChildren(new Option("All languages", "all"));
+  repositoryTopic.replaceChildren(new Option("All topics", "all"));
+  languages.forEach((language) => repositoryLanguage.add(new Option(language, language)));
+  topics.forEach((topic) => repositoryTopic.add(new Option(topic, topic)));
+}
+
+function renderRepositories() {
+  const query = repositorySearch.value.trim().toLowerCase();
+  const language = repositoryLanguage.value;
+  const topic = repositoryTopic.value;
+  let visible = repositories.filter((repo) => {
+    const searchable = `${repo.name} ${repo.description || ""} ${repo.language || ""} ${(repo.topics || []).join(" ")}`.toLowerCase();
+    return (!query || searchable.includes(query)) && (language === "all" || repo.language === language) && (topic === "all" || repo.topics?.includes(topic));
+  });
+
+  if (repositorySort.value === "name") visible.sort((a, b) => a.name.localeCompare(b.name));
+  if (repositorySort.value === "stars") visible.sort((a, b) => (b.stars || 0) - (a.stars || 0));
+  if (repositorySort.value === "updated") visible.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+  repositoryGrid.replaceChildren();
+  visible.forEach((repo, index) => repositoryGrid.append(createRepositoryCard(repo, index)));
+  repositoryStatus.textContent = `${visible.length} of ${repositories.length} repositories shown`;
+  setRepositoryState(visible.length ? "ready" : "empty");
+}
+
+async function loadRepositories(forceRefresh = false) {
+  if (!forceRefresh) {
+    const cached = readRepositoryCache();
+    if (cached) {
+      repositories = cached.repositories;
+      populateRepositoryFilters();
+      renderRepositories();
+      return;
     }
-  });
-}));
+  }
+
+  setRepositoryState("loading");
+  repositoryStatus.textContent = "Loading repositories from GitHub…";
+  repositoryRefresh.disabled = true;
+  repositoryRefresh.textContent = "Refreshing…";
+
+  try {
+    const url = forceRefresh ? `/api/github-repositories.js?refresh=${Date.now()}` : `/api/github-repositories.js`;
+    const response = await fetch(url, { headers: { Accept: "application/json" }, cache: forceRefresh ? "reload" : "default" });
+    if (!response.ok) throw new Error(`GitHub request failed (${response.status})`);
+    const payload = await response.json();
+    if (!Array.isArray(payload.repositories)) throw new Error("GitHub returned an invalid repository list");
+    repositories = payload.repositories;
+    const cached = { repositories, fetchedAt: payload.fetchedAt || new Date().toISOString() };
+    try { localStorage.setItem(repositoryCacheKey, JSON.stringify(cached)); } catch {}
+    populateRepositoryFilters();
+    renderRepositories();
+  } catch {
+    try {
+      const response = await fetch("https://api.github.com/users/Eswar-2629/repos?sort=updated&per_page=100", { headers: { Accept: "application/vnd.github+json" } });
+      if (!response.ok) throw new Error("Public GitHub fallback failed");
+      const publicRepositories = await response.json();
+      repositories = publicRepositories.filter((repo) => !repo.archived && !repo.fork).map((repo) => ({
+        id: repo.id,
+        name: repo.name,
+        description: repo.description || "No description provided",
+        language: repo.language || null,
+        topics: Array.isArray(repo.topics) ? repo.topics : [],
+        htmlUrl: repo.html_url,
+        demoUrl: null,
+        previewUrl: null,
+        previewAlt: null,
+        updatedAt: repo.updated_at,
+        stars: repo.stargazers_count || 0
+      }));
+      const cached = { repositories, fetchedAt: new Date().toISOString() };
+      try { localStorage.setItem(repositoryCacheKey, JSON.stringify(cached)); } catch {}
+      populateRepositoryFilters();
+      renderRepositories();
+    } catch {
+      repositoryStatus.textContent = "GitHub repository data is unavailable";
+      setRepositoryState("error");
+    }
+  } finally {
+    repositoryRefresh.disabled = false;
+    repositoryRefresh.textContent = "Refresh";
+  }
+}
+
+[repositorySearch, repositoryLanguage, repositoryTopic, repositorySort].forEach((control) => control.addEventListener("input", renderRepositories));
+repositorySearch.addEventListener("search", renderRepositories);
+repositoryRefresh.addEventListener("click", () => loadRepositories(true));
+repositoryRetry.addEventListener("click", () => loadRepositories(true));
+loadRepositories();
 
 const typingElement = document.querySelector(".typing");
 if (typingElement && !reducedMotion.matches) {

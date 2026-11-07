@@ -72,6 +72,27 @@ document.querySelectorAll(".reveal, .project-card, .skill-group").forEach((eleme
   revealObserver.observe(element);
 });
 
+const projectFilters = [...document.querySelectorAll(".project-filter")];
+const projectCards = [...document.querySelectorAll(".project-card[data-category]")];
+projectFilters.forEach((filter) => filter.addEventListener("click", () => {
+  const selected = filter.dataset.filter;
+  projectFilters.forEach((button) => {
+    const active = button === filter;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  projectCards.forEach((card, index) => {
+    const categories = card.dataset.category.split(" ");
+    const visible = selected === "all" || categories.includes(selected);
+    card.hidden = !visible;
+    card.classList.remove("filter-enter");
+    if (visible) {
+      card.style.setProperty("--filter-delay", reducedMotion.matches ? "0ms" : `${index % 6 * 45}ms`);
+      requestAnimationFrame(() => card.classList.add("filter-enter"));
+    }
+  });
+}));
+
 const typingElement = document.querySelector(".typing");
 if (typingElement && !reducedMotion.matches) {
   const text = typingElement.dataset.text;

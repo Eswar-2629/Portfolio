@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title desc">
+  <title id="title">Tactical digital twin terrain visualization</title>
+  <desc id="desc">Illustrative GIS-style terrain preview based on the repository, showing elevation, threat zones, obstacles, and a planned route.</desc>
+  <rect width="1200" height="675" fill="#edf0ec"/>
+  <rect x="32" y="32" width="1136" height="611" rx="14" fill="#f8faf7" stroke="#bac9c2" stroke-width="2"/>
+  <rect x="32" y="32" width="1136" height="64" rx="14" fill="#1d3432"/><rect x="32" y="80" width="1136" height="16" fill="#1d3432"/>
+  <text x="62" y="72" fill="#ffffff" font-family="Arial, sans-serif" font-size="24" font-weight="700">Tactical Digital Twin</text>
+  <text x="1134" y="72" fill="#f39a72" font-family="Arial, sans-serif" font-size="16" text-anchor="end">ILLUSTRATIVE PREVIEW</text>
+  <rect x="58" y="122" width="824" height="488" rx="8" fill="#dbe5df" stroke="#9eb3aa"/>
+  <g transform="translate(470 360)">
+    <polygon points="-380,-130 -210,-230 0,-150 170,-250 380,-130 220,-20 340,120 100,210 -120,180 -310,230 -380,120" fill="#b8cabf" stroke="#819c91" stroke-width="3"/>
+    <g fill="#9bb4a6" opacity=".9"><polygon points="-210,-230 -70,-180 0,-150 -90,-70 -240,-110"/><polygon points="170,-250 300,-170 380,-130 230,-70 90,-120"/><polygon points="-310,230 -190,150 -20,180 -120,180"/></g>
+    <circle cx="220" cy="-18" r="76" fill="#d77847" opacity=".25"/><circle cx="220" cy="-18" r="38" fill="#d77847" opacity=".28"/><circle cx="220" cy="-18" r="8" fill="#b95a34"/><circle cx="-224" cy="-82" r="58" fill="#7d9b8e" opacity=".35"/><circle cx="-224" cy="-82" r="8" fill="#4f7465"/>
+    <polyline points="-300,160 -220,112 -150,74 -84,30 -20,48 44,4 98,-42 154,-70 220,-18" fill="none" stroke="#0c7168" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-300" cy="160" r="12" fill="#ffffff" stroke="#0c7168" stroke-width="6"/><circle cx="220" cy="-18" r="12" fill="#f8faf7" stroke="#b95a34" stroke-width="5"/>
+  </g>
+  <rect x="908" y="122" width="234" height="488" rx="8" fill="#ffffff" stroke="#d7ded8"/>
+  <text x="934" y="162" fill="#202b2b" font-family="Arial, sans-serif" font-size="18" font-weight="700">Map layers</text>
+  <g font-family="Arial, sans-serif" font-size="15" fill="#5c6a68"><rect x="934" y="188" width="182" height="44" rx="6" fill="#edf4f0"/><text x="954" y="216">Elevation</text><rect x="934" y="242" width="182" height="44" rx="6" fill="#f7eee9"/><text x="954" y="270">Threat zones</text><rect x="934" y="296" width="182" height="44" rx="6" fill="#edf4f0"/><text x="954" y="324">Obstacles</text></g>
+  <text x="934" y="392" fill="#202b2b" font-family="Arial, sans-serif" font-size="16" font-weight="700">Low-exposure route</text>
+  <rect x="934" y="410" width="182" height="14" rx="7" fill="#dce9e4"/><rect x="934" y="410" width="128" height="14" rx="7" fill="#0c7168"/><text x="934" y="456" fill="#5c6a68" font-family="Arial, sans-serif" font-size="14">Export GeoJSON</text>
+</svg>

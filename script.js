@@ -108,8 +108,9 @@ function readRepositoryCache() {
 
 function createRepositoryCard(repo, index) {
   const card = document.createElement("article");
-  card.className = "project-card";
+  card.className = "project-card revealed filter-enter";
   card.style.setProperty("--reveal-delay", reducedMotion.matches ? "0ms" : `${index % 4 * 70}ms`);
+  card.style.setProperty("--filter-delay", reducedMotion.matches ? "0ms" : `${index % 4 * 45}ms`);
 
   const top = document.createElement("div");
   top.className = "project-top";
